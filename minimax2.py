@@ -5,7 +5,7 @@ import ctypes
 board = chess.Board()
 
 
-def minimax(position, depth, max_player):
+def minimax(position, depth, alpha, beta, max_player):
     if depth == 0 or winner(position) is not None:
         return evaluate(position, max_player), position.peek()
 
@@ -13,20 +13,26 @@ def minimax(position, depth, max_player):
         max_eval = float('-inf')
         best_move = None
         for board_pos, move in get_all_moves(position):
-            evaluation = minimax(board_pos, depth-1, False)[0]
+            evaluation = minimax(board_pos, depth-1, alpha, beta, False)[0]
             max_eval = max(max_eval, evaluation)
+            alpha = max(alpha, evaluation)
             if max_eval == evaluation:
                 best_move = move
+            if beta <= alpha:
+                break
 
         return max_eval, best_move
     else:
         min_eval = float('inf')
         best_move = None
         for board_pos, move in get_all_moves(position):
-            evaluation = minimax(board_pos, depth-1, True)[0]
+            evaluation = minimax(board_pos, depth-1, alpha, beta, True)[0]
             min_eval = min(min_eval, evaluation)
             if min_eval == evaluation:
                 best_move = move
+            beta = min(beta, evaluation)
+            if beta <= alpha:
+                break
 
         return min_eval, best_move
 
@@ -69,7 +75,7 @@ def winner(position):
 
 
 def print_best(position, max_depth, color):
-    best_move = minimax(position, max_depth, color)[1]
+    best_move = minimax(position, max_depth, -float("inf"), float("inf"), color)[1]
 
     print(f"bestmove {best_move}")
 
@@ -107,7 +113,7 @@ def start():
 
         elif msg.startswith("go"):
             color = board.turn
-            print_best(board, 3, color)
+            print_best(board, 5, color)
 
         else:
             print(f"Unknown command: {msg}")
