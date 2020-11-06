@@ -52,6 +52,8 @@ def evaluate(position):
     curr_eval += 9 * (pieces.count("Q") - pieces.count("q"))
     if winner(position).lower() == COLOR.lower():
         curr_eval = float("inf") if COLOR.lower() in ("white", "w") else -float("inf")
+    elif not(winner(position) == "*"):
+        curr_eval = -float("inf") if COLOR.lower() in ("white", "w") else float("inf")
     return curr_eval
 
 
