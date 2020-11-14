@@ -7,7 +7,7 @@ board = chess.Board()
 
 def minimax(position, depth, max_player):
     if depth == 0 or winner(position) is not None:
-        return evaluate(position, max_player), position.peek()
+        return evaluate(position), position.peek()
 
     if max_player:
         max_eval = float('-inf')
@@ -42,19 +42,19 @@ def get_all_moves(board_pos):
     return moves
 
 
-def evaluate(position, color):
+def evaluate(position):
     pieces = position.fen().split(" ")[0]
     curr_eval = 0
     curr_eval += (pieces.count("P") - pieces.count("p"))
     curr_eval += 3 * (pieces.count("N") + pieces.count("B") - pieces.count("n") - pieces.count("b"))
     curr_eval += 5 * (pieces.count("R") - pieces.count("r"))
     curr_eval += 9 * (pieces.count("Q") - pieces.count("q"))
-    result = winner(position)
-    if result is not None:
-        if result.lower() == color.lower():
-            curr_eval = float("inf") if color else -float("inf")
-        elif result != "*":
-            curr_eval = -float("inf") if color else float("inf")
+    # result = position.result()
+    # if result != "*":
+    #     if result.startswith("1-"):
+    #         curr_eval = float("inf")
+    #     else:
+    #         curr_eval = -float("inf")
     return curr_eval
 
 
@@ -89,7 +89,7 @@ def start():
             print("uciok")
         elif msg == "d":
             print(board)
-        elif msg == "ucinewgme":
+        elif msg == "ucinewgame":
             board.reset()
 
         elif msg.startswith("position"):
@@ -108,9 +108,6 @@ def start():
         elif msg.startswith("go"):
             color = board.turn
             print_best(board, 3, color)
-
-        else:
-            print(f"Unknown command: {msg}")
 
 
 start()
